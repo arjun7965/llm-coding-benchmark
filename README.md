@@ -10,6 +10,10 @@ execution is isolated behind adapters.
 - A supported provider runtime; NCode and OpenAI-compatible HTTP are included
 - Local access or credentials required by the configured models
 
+Language toolchains such as `rustc`, a C11 compiler, Go, Python, or PostgreSQL
+are needed only when compiling or executing answers for the corresponding task.
+See `docs/dependencies.md` for the complete validation matrix.
+
 ## Quick Start
 
 Create a private model configuration:

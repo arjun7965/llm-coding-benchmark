@@ -7,7 +7,8 @@
 - `src/` contains orchestration, statistics, configuration, and providers.
 - `test/` contains `node:test` coverage; keep provider tests separate from
   generic harness tests.
-- `docs/benchmarks/` contains task rubrics; `schemas/` defines JSON contracts.
+- `docs/` contains task rubrics and dependency guidance; `schemas/` defines
+  JSON contracts.
 - Top-level runner scripts generate and summarize ignored records in `results/`.
 
 Generated files follow `<task-id>--<model-name>.json`; keep task IDs lowercase and hyphen-separated.
@@ -45,7 +46,8 @@ must mock CLI or HTTP boundaries and not require credentials or live
 models. Run `npm test`, `npm run check`, and `npm run security:scan`. Run
 `npm run summarize` after aggregation changes. Every task needs a matching
 ten-point rubric under `docs/benchmarks/`. For runner changes, use a constrained
-smoke test or explain why a model run was omitted.
+smoke test or explain why a model run was omitted. Document any new task
+toolchain in `docs/dependencies.md`.
 
 ## Commit & Pull Request Guidelines
 

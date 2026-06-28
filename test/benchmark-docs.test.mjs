@@ -25,3 +25,18 @@ test("every benchmark task has a ten-point scoring document", () => {
     );
   }
 });
+
+test("every benchmark task has documented validation dependencies", () => {
+  const tasks = loadTasks(new URL("../tasks.json", import.meta.url));
+  const dependencies = readFileSync(
+    new URL("../docs/dependencies.md", import.meta.url),
+    "utf8",
+  );
+
+  for (const task of tasks) {
+    assert.ok(
+      dependencies.includes(`| \`${task.id}\` |`),
+      `missing dependencies for ${task.id}`,
+    );
+  }
+});
