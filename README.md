@@ -1,5 +1,7 @@
 # LLM Coding Benchmark
 
+[![51 tests](https://img.shields.io/github/actions/workflow/status/arjun7965/llm-coding-benchmark/ci.yml?branch=main&event=push&label=51%20tests)](https://github.com/arjun7965/llm-coding-benchmark/actions/workflows/ci.yml?query=branch%3Amain)
+
 A dependency-free Node.js harness for running the same coding tasks against
 multiple language models. Models are configured locally, and provider-specific
 execution is isolated behind adapters.
