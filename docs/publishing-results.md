@@ -17,6 +17,7 @@ The exporter:
 - extracts answer text from supported provider envelopes;
 - omits raw model paths, provider options, stderr, errors, usage, cost, UUIDs,
   session IDs, and tool metadata;
+- retains the task's public target-profile identifier when available;
 - redacts recognized credentials, private keys, home-directory usernames, and
   identifiers inside answer text;
 - validates each output against the public result contract; and
@@ -26,6 +27,10 @@ Exports containing redactions exit with status 2 and set
 `publication.reviewRequired` to `true`. Inspect those files and the private
 source, rotate any potentially real credential, then rerun with
 `--allow-redactions` only to acknowledge that review.
+
+Raw records created before target profiles were introduced export with
+`task.targetProfile: null`. Do not infer a current profile for historical
+records; rerun the task if profile-bearing provenance is required.
 
 ## Review Checklist
 

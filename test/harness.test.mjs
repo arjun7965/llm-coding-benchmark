@@ -98,7 +98,12 @@ test("concurrency is bounded and result ordering is stable", async () => {
 
 test("executeJob persists provider output and result metadata", async (t) => {
   const outputRoot = temporaryDirectory(t);
-  const [job] = createJobs(tasks, [models[0]]);
+  const [job] = createJobs([
+    {
+      ...tasks[0],
+      targetProfile: "portable-c11",
+    },
+  ], [models[0]]);
   let generatedJob;
   const generate = async (receivedJob) => {
     generatedJob = receivedJob;
@@ -125,6 +130,7 @@ test("executeJob persists provider output and result metadata", async (t) => {
   assert.equal(persisted.stdout, "generated answer");
   assert.equal(persisted.stderr, "diagnostic");
   assert.equal(persisted.task, "task-one");
+  assert.equal(persisted.targetProfile, "portable-c11");
   assert.equal(persisted.provider, "fake");
   assert.equal(persisted.modelName, "alpha");
   assert.deepEqual(persisted.modelOptions, {});

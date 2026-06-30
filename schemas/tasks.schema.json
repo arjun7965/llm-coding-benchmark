@@ -8,6 +8,21 @@
     "type": "object",
     "additionalProperties": false,
     "required": ["id", "category", "prompt"],
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "category": {
+              "enum": ["embedded", "firmware"]
+            }
+          },
+          "required": ["category"]
+        },
+        "then": {
+          "required": ["targetProfile"]
+        }
+      }
+    ],
     "properties": {
       "id": {
         "type": "string",
@@ -20,6 +35,18 @@
       "prompt": {
         "type": "string",
         "minLength": 1
+      },
+      "targetProfile": {
+        "type": "string",
+        "enum": [
+          "portable-c11",
+          "c11-lock-free-spsc",
+          "c11-mocked-hal",
+          "armv7m-bare-metal",
+          "rv32-bare-metal",
+          "generic-rtos",
+          "embedded-linux-posix"
+        ]
       }
     }
   }

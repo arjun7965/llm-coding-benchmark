@@ -20,6 +20,10 @@ Every embedded or firmware task must state or reference:
 Unspecified behavior must not be required to score a response. Task-specific
 text overrides a profile, but every override must be explicit.
 
+`targetProfile` is metadata consumed by validation and result reporting.
+Provider adapters send only the task's `prompt`, so any assumption the model
+must know also belongs in the prompt; profiles do not create hidden context.
+
 ## Current Profiles
 
 ### `portable-c11`

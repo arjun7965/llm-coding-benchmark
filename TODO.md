@@ -50,7 +50,7 @@
 
 - [x] Define explicit target assumptions for every task: architecture, ABI,
   endianness, compiler, language version, RTOS, and available hardware APIs.
-- [ ] Store embedded `targetProfile` metadata in `tasks.json`; validate profile
+- [x] Store embedded `targetProfile` metadata in `tasks.json`; validate profile
   references through the task schema and runtime validation instead of a
   test-local mapping.
 - [ ] Build deterministic host-side hardware mocks and simulators so core tasks

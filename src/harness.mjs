@@ -6,8 +6,18 @@ import {
 } from "node:fs";
 import { dirname, join } from "node:path";
 import { validateModels } from "./models.mjs";
+import {
+  targetProfileRequiredCategories,
+  targetProfileSet,
+} from "./target-profiles.mjs";
 
 const taskIdPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const taskFields = new Set([
+  "category",
+  "id",
+  "prompt",
+  "targetProfile",
+]);
 
 export function validateTasks(tasks) {
   if (!Array.isArray(tasks) || tasks.length === 0) {
@@ -19,8 +29,7 @@ export function validateTasks(tasks) {
     if (!task || typeof task !== "object" || Array.isArray(task)) {
       throw new TypeError(`task at index ${index} must be an object`);
     }
-    const keys = Object.keys(task).sort().join(",");
-    if (keys !== "category,id,prompt") {
+    if (Object.keys(task).some((key) => !taskFields.has(key))) {
       throw new TypeError(`task at index ${index} has unexpected fields`);
     }
     if (typeof task.id !== "string" || !taskIdPattern.test(task.id)) {
@@ -34,6 +43,15 @@ export function validateTasks(tasks) {
     }
     if (typeof task.prompt !== "string" || task.prompt.trim() === "") {
       throw new TypeError(`task ${task.id} must have a prompt`);
+    }
+    if (task.targetProfile !== undefined &&
+        (typeof task.targetProfile !== "string" ||
+         !targetProfileSet.has(task.targetProfile))) {
+      throw new TypeError(`task ${task.id} has an invalid targetProfile`);
+    }
+    if (targetProfileRequiredCategories.has(task.category) &&
+        task.targetProfile === undefined) {
+      throw new TypeError(`task ${task.id} must have a targetProfile`);
     }
     ids.add(task.id);
   }
@@ -139,6 +157,7 @@ export async function executeJob({
     run: job.run,
     task: job.task.id,
     category: job.task.category,
+    targetProfile: job.task.targetProfile ?? null,
     provider: job.provider,
     modelName: job.modelName,
     modelId: job.modelId,

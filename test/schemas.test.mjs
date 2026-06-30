@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { loadTasks } from "../src/harness.mjs";
+import { targetProfileIds } from "../src/target-profiles.mjs";
 import {
   loadScores,
   scoreModelIds,
@@ -71,9 +72,27 @@ test("JSON Schema files declare the expected contracts", () => {
       "utf8",
     ),
   );
+  const publicResultSchema = JSON.parse(
+    readFileSync(
+      new URL("../schemas/public-result.schema.json", import.meta.url),
+      "utf8",
+    ),
+  );
 
   assert.equal(taskSchema.$schema, "https://json-schema.org/draft/2020-12/schema");
   assert.equal(taskSchema.items.additionalProperties, false);
+  assert.deepEqual(
+    taskSchema.items.properties.targetProfile.enum,
+    targetProfileIds,
+  );
+  assert.deepEqual(
+    taskSchema.items.allOf[0].then.required,
+    ["targetProfile"],
+  );
   assert.equal(scoreSchema.$schema, taskSchema.$schema);
   assert.equal(scoreSchema.additionalProperties, false);
+  assert.deepEqual(
+    publicResultSchema.properties.task.properties.targetProfile.enum,
+    [null, ...targetProfileIds],
+  );
 });

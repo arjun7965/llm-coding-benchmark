@@ -57,8 +57,9 @@ BENCHMARK_MODELS_FILE=/path/to/models.json npm run benchmark
 ## Tasks and Results
 
 `tasks.json` defines the shared prompts. Each task has a stable lowercase ID,
-category, and prompt. The harness writes one record per task/model pair under
-`results/`.
+category, prompt, and optional `targetProfile`. Embedded and firmware categories
+require a recognized profile. The harness writes one record per task/model pair
+under `results/`.
 
 Select a subset or override execution controls without editing configuration:
 
@@ -111,7 +112,8 @@ requirements such as score-array lengths.
 
 Embedded and firmware expansion is governed by
 `docs/embedded/capability-matrix.md` and reusable target profiles in
-`docs/embedded/target-assumptions.md`.
+`docs/embedded/target-assumptions.md`. Profiles are recorded as validation and
+result metadata; they do not inject hidden text into model prompts.
 
 ## Adding a Provider
 

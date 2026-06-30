@@ -12,12 +12,13 @@
 - `docs/embedded/` defines firmware coverage and reusable target profiles.
 - Top-level runner scripts generate and summarize ignored records in `results/`.
 
-Generated files follow `<task-id>--<model-name>.json`; keep task IDs lowercase and hyphen-separated.
+Generated files follow `<task-id>--<model-name>.json`; keep task IDs lowercase
+and hyphen-separated. Embedded and firmware tasks require `targetProfile`.
 
 ## Build, Test, and Development Commands
 
-There is no build step. Use Node.js 22+, copy `models.example.json` to
-`models.local.json`, and install the runtime required by each provider.
+Use Node.js 22+, copy `models.example.json` to `models.local.json`, and install
+the runtime required by each provider.
 
 ```bash
 node run-benchmark.mjs       # Run the primary task/model matrix
@@ -48,8 +49,8 @@ models. Run `npm test`, `npm run check`, and `npm run security:scan`. Run
 `npm run summarize` after aggregation changes. Every task needs a matching
 ten-point rubric under `docs/benchmarks/`. For runner changes, use a constrained
 smoke test or explain why a model run was omitted. Document any new task
-toolchain in `docs/dependencies.md`; embedded tasks must reference a profile
-from `docs/embedded/target-assumptions.md`.
+toolchain in `docs/dependencies.md`; embedded profiles must be defined in
+`src/target-profiles.mjs` and documented under `docs/embedded/`.
 
 ## Commit & Pull Request Guidelines
 

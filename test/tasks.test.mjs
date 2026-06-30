@@ -45,3 +45,30 @@ test("task validation requires nonempty categories and prompts", () => {
     /unexpected fields/,
   );
 });
+
+test("embedded tasks require a known target profile", () => {
+  const embeddedTask = {
+    id: "embedded-task",
+    category: "embedded",
+    prompt: "Implement firmware.",
+  };
+
+  assert.throws(
+    () => validateTasks([embeddedTask]),
+    /must have a targetProfile/,
+  );
+  assert.throws(
+    () => validateTasks([{
+      ...embeddedTask,
+      targetProfile: "unknown-profile",
+    }]),
+    /invalid targetProfile/,
+  );
+  assert.equal(
+    validateTasks([{
+      ...embeddedTask,
+      targetProfile: "armv7m-bare-metal",
+    }])[0].targetProfile,
+    "armv7m-bare-metal",
+  );
+});

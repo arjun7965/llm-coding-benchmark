@@ -8,6 +8,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
+import { targetProfileSet } from "./target-profiles.mjs";
 
 const sensitiveRules = [
   {
@@ -187,10 +188,11 @@ export function toPublicResult(rawResult, source = JSON.stringify(rawResult)) {
 
   const answer = sanitizeText(extractAnswer(rawResult.stdout));
   const publicResult = {
-    schemaVersion: "1.0",
+    schemaVersion: "1.1",
     task: {
       id: requireString(rawResult.task, "task"),
       category: requireString(rawResult.category, "category"),
+      targetProfile: rawResult.targetProfile ?? null,
     },
     model: {
       id: requireString(rawResult.modelName, "modelName"),
@@ -226,10 +228,14 @@ export function validatePublicResult(result) {
     "task",
   ];
   requireExactKeys(result, topLevelKeys, "public result");
-  if (result.schemaVersion !== "1.0") {
+  if (result.schemaVersion !== "1.1") {
     throw new TypeError("unsupported public result schemaVersion");
   }
-  requireExactKeys(result.task, ["category", "id"], "task");
+  requireExactKeys(
+    result.task,
+    ["category", "id", "targetProfile"],
+    "task",
+  );
   requireExactKeys(result.model, ["id", "provider"], "model");
   requireExactKeys(
     result.execution,
@@ -243,6 +249,11 @@ export function validatePublicResult(result) {
   );
   requireString(result.task?.id, "task.id");
   requireString(result.task?.category, "task.category");
+  if (result.task.targetProfile !== null &&
+      (typeof result.task.targetProfile !== "string" ||
+       !targetProfileSet.has(result.task.targetProfile))) {
+    throw new TypeError("task.targetProfile is invalid");
+  }
   requireString(result.model?.id, "model.id");
   requireString(result.model?.provider, "model.provider");
   if (!Number.isInteger(result.run) || result.run < 1) {

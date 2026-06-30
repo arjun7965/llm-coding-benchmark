@@ -12,16 +12,19 @@
   {
     "id": "embedded-ring-buffer",
     "category": "embedded",
+    "targetProfile": "c11-lock-free-spsc",
     "prompt": "Implement a bounded single-producer/single-consumer byte ring buffer in portable C11. The producer runs in an interrupt handler and the consumer runs in the main loop. Capacity must be a power of two, no dynamic allocation, and push/pop must be non-blocking. Define and justify overflow behavior and use C11 atomics with correct memory ordering. Avoid undefined behavior and preserve the full declared capacity. Include the code plus a concise explanation and a small deterministic test. Keep the answer under 1300 words."
   },
   {
     "id": "firmware-state-machine",
     "category": "firmware",
+    "targetProfile": "c11-mocked-hal",
     "prompt": "Write portable C for a non-blocking firmware state machine that polls an I2C temperature sensor every 1000 ms. The HAL exposes bool i2c_start_read(uint8_t addr,uint8_t reg,uint8_t *dst,size_t n), bool i2c_done(void), bool i2c_ok(void), and uint32_t millis(void). Requirements: never busy-wait; 25 ms transaction timeout; up to 3 attempts with 10 ms backoff; safe across uint32_t timer wraparound; never start overlapping transfers; expose latest valid sample and its timestamp. State assumptions about HAL completion semantics. Include testable code and key tests. Keep the answer under 1500 words."
   },
   {
     "id": "binary-parser",
     "category": "systems-security",
+    "targetProfile": "portable-c11",
     "prompt": "Implement a safe C function to parse an untrusted binary frame: magic bytes 0xA5 0x5A, version u8 (must be 1), payload_len little-endian u16, payload bytes, then CRC16-CCITT little-endian over version+length+payload. Input may be unaligned. Reject truncation, trailing bytes, oversized payloads above 1024, bad magic/version/CRC, and integer overflow. Return an enum error and a non-owning payload view on success. Do not cast the byte buffer to structs. Include code and focused tests. Keep the answer under 1400 words."
   },
   {
