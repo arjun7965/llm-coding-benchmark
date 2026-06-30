@@ -4,6 +4,10 @@
 
 Assess defensive parsing of an untrusted byte frame in portable C.
 
+## Target Assumptions
+
+Target profile: `portable-c11`. See `docs/embedded/target-assumptions.md`.
+
 ## Scoring
 
 - 3 points — Every length calculation and buffer access is bounds-checked safely.

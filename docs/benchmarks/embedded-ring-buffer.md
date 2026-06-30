@@ -5,6 +5,11 @@
 Assess portable lock-free reasoning for a C11 single-producer/single-consumer
 queue shared between an interrupt and a main loop.
 
+## Target Assumptions
+
+Target profile: `c11-lock-free-spsc`. See
+`docs/embedded/target-assumptions.md`.
+
 ## Scoring
 
 - 3 points — Atomic ownership and acquire/release ordering correctly synchronize data.

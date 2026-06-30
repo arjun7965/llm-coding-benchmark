@@ -5,6 +5,11 @@
 Assess non-blocking firmware control flow, wrap-safe timing, and recovery around
 an asynchronous I2C HAL.
 
+## Target Assumptions
+
+Target profile: `c11-mocked-hal`. See `docs/embedded/target-assumptions.md`.
+The answer must still state its assumption about how HAL completion is observed.
+
 ## Scoring
 
 - 3 points — Explicit states prevent busy-waiting and overlapping I2C transfers.

@@ -9,6 +9,7 @@
   generic harness tests.
 - `docs/` contains task rubrics and dependency guidance; `schemas/` defines
   JSON contracts.
+- `docs/embedded/` defines firmware coverage and reusable target profiles.
 - Top-level runner scripts generate and summarize ignored records in `results/`.
 
 Generated files follow `<task-id>--<model-name>.json`; keep task IDs lowercase and hyphen-separated.
@@ -47,7 +48,8 @@ models. Run `npm test`, `npm run check`, and `npm run security:scan`. Run
 `npm run summarize` after aggregation changes. Every task needs a matching
 ten-point rubric under `docs/benchmarks/`. For runner changes, use a constrained
 smoke test or explain why a model run was omitted. Document any new task
-toolchain in `docs/dependencies.md`.
+toolchain in `docs/dependencies.md`; embedded tasks must reference a profile
+from `docs/embedded/target-assumptions.md`.
 
 ## Commit & Pull Request Guidelines
 

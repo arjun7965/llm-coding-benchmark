@@ -109,6 +109,10 @@ contracts are provided in `schemas/tasks.schema.json` and
 `schemas/repeat-scores.schema.json`; the summarizer also validates cross-field
 requirements such as score-array lengths.
 
+Embedded and firmware expansion is governed by
+`docs/embedded/capability-matrix.md` and reusable target profiles in
+`docs/embedded/target-assumptions.md`.
+
 ## Adding a Provider
 
 Implement an adapter under `src/providers/` that accepts a job and returns:

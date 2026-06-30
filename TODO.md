@@ -19,7 +19,7 @@
 
 ### Task Coverage
 
-- [ ] Define a capability matrix spanning bare-metal, RTOS, embedded Linux,
+- [x] Define a capability matrix spanning bare-metal, RTOS, embedded Linux,
   drivers, protocols, debugging, safety, security, and optimization.
 - [ ] Add bare-metal tasks for register access, startup code, linker behavior,
   memory maps, and interrupt-vector configuration.
@@ -48,8 +48,11 @@
 
 ### Harness and Evaluation
 
-- [ ] Define explicit target assumptions for every task: architecture, ABI,
+- [x] Define explicit target assumptions for every task: architecture, ABI,
   endianness, compiler, language version, RTOS, and available hardware APIs.
+- [ ] Store embedded `targetProfile` metadata in `tasks.json`; validate profile
+  references through the task schema and runtime validation instead of a
+  test-local mapping.
 - [ ] Build deterministic host-side hardware mocks and simulators so core tasks
   require no physical board or proprietary SDK.
 - [ ] Add optional cross-compilation checks for representative ARM and RISC-V

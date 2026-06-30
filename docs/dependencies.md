@@ -39,6 +39,9 @@ Keep validator-only packages outside the root project or in a future isolated
 fixture directory. Do not add runtime dependencies to this dependency-free
 harness solely to score one task.
 
+Embedded task toolchains and runtime assumptions are defined separately in
+`docs/embedded/target-assumptions.md`.
+
 Useful version checks include:
 
 ```bash
