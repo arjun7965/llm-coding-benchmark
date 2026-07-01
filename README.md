@@ -1,6 +1,6 @@
 # LLM Coding Benchmark
 
-[![51 tests](https://img.shields.io/github/actions/workflow/status/arjun7965/llm-coding-benchmark/ci.yml?branch=main&event=push&label=51%20tests)](https://github.com/arjun7965/llm-coding-benchmark/actions/workflows/ci.yml?query=branch%3Amain)
+[![55 tests](https://img.shields.io/github/actions/workflow/status/arjun7965/llm-coding-benchmark/ci.yml?branch=main&event=push&label=55%20tests)](https://github.com/arjun7965/llm-coding-benchmark/actions/workflows/ci.yml?query=branch%3Amain)
 [![12 C tests](https://img.shields.io/github/actions/workflow/status/arjun7965/llm-coding-benchmark/c-tests.yml?branch=main&event=push&label=12%20C%20tests)](https://github.com/arjun7965/llm-coding-benchmark/actions/workflows/c-tests.yml?query=branch%3Amain)
 
 A dependency-free Node.js harness for running the same coding tasks against
@@ -118,6 +118,21 @@ Embedded and firmware expansion is governed by
 `docs/embedded/capability-matrix.md` and reusable target profiles in
 `docs/embedded/target-assumptions.md`. Profiles are recorded as validation and
 result metadata; they do not inject hidden text into model prompts.
+
+## Optional Cross-Compilation
+
+Probe trusted C references for ARMv7-M and RV32 portability:
+
+```bash
+npm run cross:check
+npm run cross:check -- --target armv7m-bare-metal
+```
+
+Unavailable compilers are skipped locally. Pass `--require-tools` to fail when
+a compiler is missing. The manual **Cross compilation** GitHub Actions workflow
+installs both toolchains and requires both target checks to pass. These checks
+compile trusted sources only; they do not link, execute, or validate generated
+model code.
 
 ## Fixture Scaffolds
 

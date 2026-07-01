@@ -64,11 +64,27 @@ Run both trusted C fixture suites with:
 npm run test:c
 ```
 
+## Optional Cross-Compilation
+
+Representative bare-metal checks use:
+
+- `arm-none-eabi-gcc` from `gcc-arm-none-eabi` for Cortex-M3/Thumb;
+- `riscv64-unknown-elf-gcc` from `gcc-riscv64-unknown-elf` with
+  `-march=rv32imac -mabi=ilp32`.
+
+Run `npm run cross:check`; missing tools are reported and skipped. CI or strict
+local validation should use `npm run cross:check -- --require-tools`. Select one
+profile with `--target armv7m-bare-metal` or `--target rv32-bare-metal`.
+Cross-compilation creates temporary object files from trusted references only;
+it does not link or execute target or model-generated code.
+
 Useful version checks include:
 
 ```bash
 node --version
 cc --version
+arm-none-eabi-gcc --version
+riscv64-unknown-elf-gcc --version
 python3 --version
 go version
 rustc --version

@@ -86,3 +86,7 @@ behavior, filesystem durability assumptions, and service resource limits.
 
 Planned profiles become active only when a committed task supplies its fixtures,
 rubric, dependency entry, and validation commands.
+
+`npm run cross:check` compiles trusted portable references for the planned
+ARMv7-M and RV32 architectures. This is a compile-only portability probe, not
+evidence that a task satisfies either complete bare-metal profile.

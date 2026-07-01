@@ -3,13 +3,12 @@
 ## Project Structure & Module Organization
 
 - `tasks.json` defines task IDs, categories, and prompts;
-  `models.example.json` documents local model configuration.
-- `src/` contains orchestration, statistics, configuration, and providers.
-- `test/` contains `node:test` coverage; keep provider tests separate from
-  generic harness tests.
+  `models.example.json` documents model configuration.
+- `src/` contains harness modules and providers.
+- `test/` contains `node:test` coverage, including isolated provider tests.
 - `docs/` contains rubrics, dependencies, and embedded plans; `schemas/`
   defines JSON contracts.
-- `fixtures/<task-id>/` contains validated manifests and task assets.
+- `fixtures/<task-id>/` contains manifests and task assets.
 - Top-level runner scripts generate and summarize ignored records in `results/`.
 
 Generated files follow `<task-id>--<model-name>.json`; keep task IDs lowercase
@@ -29,6 +28,7 @@ npm run check                # Syntax-check JavaScript
 npm run security:scan        # Detect credentials and personal paths
 npm run fixtures:check       # Validate fixture manifests and paths
 npm run test:c               # Run trusted C fixture tests
+npm run cross:check          # Probe optional cross-compilers
 ```
 
 Use `npm run benchmark -- --help` for model/task filters, run selection,

@@ -8,7 +8,11 @@ assumptions are made comparable across model runs.
   assumptions every embedded task must state.
 - `../../fixtures/` contains the validated per-task scaffold and manifest
   layout used by future executable checks.
+- `../../scripts/check-cross-compilation.mjs` optionally compiles trusted C
+  references for representative ARMv7-M and RV32 targets.
 
 The matrix is a planning artifact, not a claim that listed hardware or
 toolchains are installed. A capability is considered covered only after its
 task, rubric, fixtures, and validation path are committed and calibrated.
+Cross-compilation is a portability probe; it does not activate a planned target
+profile or replace task-specific execution tests.

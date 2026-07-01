@@ -1,0 +1,30 @@
+name: Cross compilation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: armv7m-bare-metal
+            package: gcc-arm-none-eabi
+          - target: rv32-bare-metal
+            package: gcc-riscv64-unknown-elf
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: sudo apt-get update
+      - run: sudo apt-get install --yes --no-install-recommends ${{ matrix.package }}
+      - run: >-
+          npm run cross:check --
+          --require-tools
+          --target ${{ matrix.target }}

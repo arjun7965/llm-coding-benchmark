@@ -1,0 +1,220 @@
+import { spawnSync } from "node:child_process";
+import {
+  mkdtempSync,
+  rmSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import {
+  join,
+  resolve,
+} from "node:path";
+
+const commonFlags = Object.freeze([
+  "-std=c11",
+  "-Wall",
+  "-Wextra",
+  "-Werror",
+  "-pedantic",
+  "-ffreestanding",
+  "-fno-builtin",
+  "-Os",
+]);
+
+const trustedSources = Object.freeze([
+  Object.freeze({
+    id: "embedded-ring-buffer",
+    source: "fixtures/embedded-ring-buffer/reference/ring_buffer.c",
+    includes: Object.freeze([
+      "fixtures/embedded-ring-buffer/starter",
+    ]),
+  }),
+  Object.freeze({
+    id: "firmware-state-machine",
+    source:
+      "fixtures/firmware-state-machine/reference/firmware_state_machine.c",
+    includes: Object.freeze([
+      "fixtures/firmware-state-machine/starter",
+    ]),
+  }),
+]);
+
+export const crossCompilationTargets = Object.freeze([
+  Object.freeze({
+    id: "armv7m-bare-metal",
+    compiler: "arm-none-eabi-gcc",
+    packageName: "gcc-arm-none-eabi",
+    flags: Object.freeze([
+      "-mcpu=cortex-m3",
+      "-mthumb",
+    ]),
+  }),
+  Object.freeze({
+    id: "rv32-bare-metal",
+    compiler: "riscv64-unknown-elf-gcc",
+    packageName: "gcc-riscv64-unknown-elf",
+    flags: Object.freeze([
+      "-march=rv32imac",
+      "-mabi=ilp32",
+    ]),
+  }),
+]);
+
+const targetById = new Map(
+  crossCompilationTargets.map((target) => [target.id, target]),
+);
+
+export function parseCrossCompilationArgs(argv) {
+  const targetIds = [];
+  let requireTools = false;
+  let help = false;
+
+  for (let index = 0; index < argv.length; index++) {
+    const argument = argv[index];
+    if (argument === "--require-tools") {
+      requireTools = true;
+    } else if (argument === "--help" || argument === "-h") {
+      help = true;
+    } else if (argument === "--target") {
+      index++;
+      if (index >= argv.length) {
+        throw new Error("--target requires a profile ID");
+      }
+      targetIds.push(argv[index]);
+    } else if (argument.startsWith("--target=")) {
+      targetIds.push(argument.slice("--target=".length));
+    } else {
+      throw new Error(`Unknown cross-compilation option: ${argument}`);
+    }
+  }
+
+  const selectedIds = targetIds.length > 0
+    ? [...new Set(targetIds)]
+    : crossCompilationTargets.map((target) => target.id);
+  for (const targetId of selectedIds) {
+    if (!targetById.has(targetId)) {
+      throw new Error(`Unknown cross-compilation target: ${targetId}`);
+    }
+  }
+
+  return {
+    help,
+    requireTools,
+    targetIds: selectedIds,
+  };
+}
+
+function compilerVersion(target, spawn) {
+  const result = spawn(target.compiler, ["--version"], {
+    encoding: "utf8",
+  });
+  if (result.error?.code === "ENOENT") return null;
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    throw new Error(
+      `${target.compiler} --version exited with status ${result.status}`,
+    );
+  }
+  return result.stdout.split(/\r?\n/u)[0].trim();
+}
+
+function compileSource(target, source, output, spawn, repositoryRoot) {
+  const includeFlags = source.includes.flatMap((directory) => [
+    "-I",
+    directory,
+  ]);
+  const args = [
+    ...commonFlags,
+    ...target.flags,
+    ...includeFlags,
+    "-c",
+    source.source,
+    "-o",
+    output,
+  ];
+  const result = spawn(target.compiler, args, {
+    cwd: repositoryRoot,
+    encoding: "utf8",
+  });
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    const detail = result.stderr?.trim();
+    throw new Error(
+      `${target.compiler} failed for ${source.id}` +
+      `${detail ? `:\n${detail}` : ""}`,
+    );
+  }
+}
+
+export function runCrossCompilation({
+  targetIds = crossCompilationTargets.map((target) => target.id),
+  requireTools = false,
+  repositoryRoot = resolve("."),
+  spawn = spawnSync,
+  log = console.log,
+} = {}) {
+  const selectedTargets = targetIds.map((targetId) => {
+    const target = targetById.get(targetId);
+    if (!target) {
+      throw new Error(`Unknown cross-compilation target: ${targetId}`);
+    }
+    return target;
+  });
+  const summary = {
+    compiledTargets: [],
+    skippedTargets: [],
+    objectCount: 0,
+  };
+  let temporaryRoot;
+
+  try {
+    for (const target of selectedTargets) {
+      const version = compilerVersion(target, spawn);
+      if (version === null) {
+        if (requireTools) {
+          throw new Error(
+            `${target.compiler} is required; install ${target.packageName}`,
+          );
+        }
+        summary.skippedTargets.push(target.id);
+        log(`skip - ${target.id}: ${target.compiler} not found`);
+        continue;
+      }
+
+      temporaryRoot ??= mkdtempSync(
+        join(tmpdir(), "llm-benchmark-cross-"),
+      );
+      log(`target - ${target.id}: ${version}`);
+      for (const source of trustedSources) {
+        const output = join(
+          temporaryRoot,
+          `${target.id}--${source.id}.o`,
+        );
+        compileSource(
+          target,
+          source,
+          output,
+          spawn,
+          repositoryRoot,
+        );
+        summary.objectCount++;
+        log(`ok - ${target.id}: ${source.id}`);
+      }
+      summary.compiledTargets.push(target.id);
+    }
+  } finally {
+    if (temporaryRoot) {
+      rmSync(temporaryRoot, { recursive: true, force: true });
+    }
+  }
+
+  return summary;
+}
+
+export const crossCompilationUsage = `Usage:
+  npm run cross:check -- [options]
+
+Options:
+  --target <profile>  Check one target profile; may be repeated
+  --require-tools     Fail instead of skipping unavailable compilers
+  -h, --help          Show this help
+`;
